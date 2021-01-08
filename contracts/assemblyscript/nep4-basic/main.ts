@@ -48,6 +48,7 @@ export const ERROR_OWNER_ID_DOES_NOT_MATCH_EXPECTATION =
 export const ERROR_TOKEN_NOT_OWNED_BY_CALLER =
 	'Token is not owned by the caller. Please use transfer_from for this scenario'
 export const ERROR_TOKEN_NOT_IN_MARKET = 'Token is not available in market.'
+export const ERROR_DEPOSIT_NOT_MATCH = 'Deposit does not match the market price'
 
 /******************/
 /* CHANGE METHODS */
@@ -199,25 +200,29 @@ function internal_remove_from_market(token_id: TokenId): void {
 export function buy(token_id: TokenId): TokenId {
 	const caller = context.predecessor
 
-	const price = market.getSome(token_id)
 	const amount = context.attachedDeposit
+	const price = market.getSome(token_id)
 
-	assert(price == amount, 'Deposit does not match the market price')
+  // check if the amount deposited match with the price
+	assert(amount == price, ERROR_DEPOSIT_NOT_MATCH)
 
+  // calculate commission for the smart contract
 	const owner = tokenToOwner.getSome(token_id)
 	const forOwner: u128 = u128.div(
 		u128.mul(amount, u128.from(100 - COMMISSION)),
 		u128.from(100)
 	)
-
 	const contract = context.contractName
 	const forContract: u128 = u128.sub(amount, forOwner)
 
+  // tranfer the deposit to token owner and smart contract
 	ContractPromiseBatch.create(owner).transfer(forOwner)
 	ContractPromiseBatch.create(contract).transfer(forContract)
 
+  // remove the token from the market
 	internal_remove_from_market(token_id)
 
+  // update the token owner
 	tokenToOwner.set(token_id, caller)
 
 	return token_id
