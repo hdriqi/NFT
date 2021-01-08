@@ -34,7 +34,6 @@ const market = new PersistentUnorderedMap<TokenId, Price>('m')
 const TOTAL_SUPPLY = 'c'
 const COMMISSION = 5
 
-
 /******************/
 /* ERROR MESSAGES */
 /******************/
@@ -222,4 +221,26 @@ export function buy(token_id: TokenId): TokenId {
 	tokenToOwner.set(token_id, caller)
 
 	return token_id
+}
+
+@nearBindgen
+export class TokenDetail {
+	tokenId: TokenId
+	price: Price
+
+	constructor(tokenId: TokenId, price: Price) {
+		this.tokenId = tokenId
+		this.price = price
+	}
+}
+
+export function get_market(start: i32, end: i32): TokenDetail[] {
+	const results: TokenDetail[] = []
+
+	const tokenList = market.entries(start, end)
+	for (let i = 0; i < tokenList.length; i++) {
+		results.push(new TokenDetail(tokenList[i].key, tokenList[i].value))
+	}
+
+	return results
 }

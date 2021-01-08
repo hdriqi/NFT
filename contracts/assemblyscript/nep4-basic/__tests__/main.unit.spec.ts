@@ -300,3 +300,16 @@ describe('buy', () => {
 		}).toThrow(nonSpec.ERROR_TOKEN_NOT_IN_MARKET)
 	})
 })
+
+describe('get_market', () => {
+	it('return market data', () => {
+		VMContext.setPredecessor_account_id(alice)
+		// mint new token that return its id
+		const tokenId = nonSpec.mint_to(alice)
+		// set price to be 1 NEAR
+		const price = u128.from('1000000000000000000000000')
+		nonSpec.add_to_market(tokenId, price)
+
+		expect(nonSpec.get_market(0, 1)).toHaveLength(1)
+	})
+})
