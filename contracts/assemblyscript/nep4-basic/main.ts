@@ -13,6 +13,7 @@ import {
 
 type AccountId = string
 type TokenId = u64
+type Price = u128
 
 // Note that MAX_SUPPLY is implemented here as a simple constant
 // It is exported only to facilitate unit testing
@@ -27,12 +28,12 @@ const tokenToOwner = new PersistentMap<TokenId, AccountId>('a')
 // complicates the code and costs more in storage rent.
 const escrowAccess = new PersistentMap<AccountId, AccountId>('b')
 
+const market = new PersistentUnorderedMap<TokenId, Price>('m')
+
 // This is a key in storage used to track the current minted supply
 const TOTAL_SUPPLY = 'c'
 const COMMISSION = 5
 
-type Price = u128
-const market = new PersistentUnorderedMap<TokenId, Price>('m')
 
 /******************/
 /* ERROR MESSAGES */

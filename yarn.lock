@@ -2648,7 +2648,6 @@ ethereumjs-abi@0.6.5:
 
 "ethereumjs-abi@git+https://github.com/ethereumjs/ethereumjs-abi.git":
   version "0.6.8"
-  uid "1ce6a1d64235fabe2aaf827fd606def55693508f"
   resolved "git+https://github.com/ethereumjs/ethereumjs-abi.git#1ce6a1d64235fabe2aaf827fd606def55693508f"
   dependencies:
     bn.js "^4.11.8"
@@ -5012,7 +5011,7 @@ near-mock-vm@^2.2.2:
     "@assemblyscript/loader" "^0.9.4"
     yargs "^15.3.1"
 
-near-sdk-as@^2.2.2:
+near-sdk-as@2.2.2:
   version "2.2.2"
   resolved "https://registry.yarnpkg.com/near-sdk-as/-/near-sdk-as-2.2.2.tgz#69854800814bc5992ad1b9bc5c2bc6d32715f642"
   integrity sha512-8w+DG3v8XGzS8ndB4G2oo8ouLxV4qIqDPB2OIyrQZutCUX5cqclZlJX6dagW+K0F6CCKeDicjgQ4VGykNWeowQ==

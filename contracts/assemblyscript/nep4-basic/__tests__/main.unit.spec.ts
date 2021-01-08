@@ -1,4 +1,4 @@
-import { u128, VM, VMContext } from 'near-sdk-as'
+import { u128, VMContext } from 'near-sdk-as'
 
 // explicitly import functions required by spec
 import {
