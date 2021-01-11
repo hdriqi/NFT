@@ -171,7 +171,11 @@ export function add_to_market(token_id: TokenId, price: Price): boolean {
 }
 
 function internal_add_to_market(token_id: TokenId, price: Price): void {
-	market.set(token_id, price)
+  market.set(token_id, price)
+}
+
+export function get_market_price(tokenId: TokenId): Price {
+  return market.getSome(tokenId)
 }
 
 export function remove_from_market(token_id: TokenId): boolean {

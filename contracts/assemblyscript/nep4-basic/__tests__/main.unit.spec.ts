@@ -255,6 +255,19 @@ describe('add_to_market', () => {
 	})
 })
 
+describe('get_market_price', () => {
+	it('return market price for a token', () => {
+		VMContext.setPredecessor_account_id(alice)
+		// mint new token that return its id
+		const tokenId = nonSpec.mint_to(alice)
+		// set price to be 1 NEAR
+		const price = u128.from('1000000000000000000000000')
+		nonSpec.add_to_market(tokenId, price)
+		// get the first 5 NFTs listed on the market
+		expect(nonSpec.get_market_price(tokenId)).toBe(price)
+	})
+})
+
 describe('remove_from_market', () => {
 	it('should remove nft from market and return true', () => {
 		VMContext.setPredecessor_account_id(alice)
@@ -262,8 +275,9 @@ describe('remove_from_market', () => {
 		const tokenId = nonSpec.mint_to(alice)
 		// 1 NEAR
 		const price = u128.from('1000000000000000000000000')
-
+		// add token to market
 		expect(nonSpec.add_to_market(tokenId, price)).toBe(true)
+		// remove token from market
 		expect(nonSpec.remove_from_market(tokenId)).toBe(true)
 	})
 
@@ -272,6 +286,7 @@ describe('remove_from_market', () => {
 			VMContext.setPredecessor_account_id(alice)
 			// mint new token that return its id
 			const tokenId = nonSpec.mint_to(alice)
+			// throw error when try to remove token id that was not listed
 			nonSpec.remove_from_market(tokenId)
 		}).toThrow(nonSpec.ERROR_TOKEN_NOT_IN_MARKET)
 	})
@@ -285,31 +300,32 @@ describe('buy', () => {
 		// set price to be 1 NEAR
 		const price = u128.from('1000000000000000000000000')
 		nonSpec.add_to_market(tokenId, price)
-
+		// mock the Buyer id & the deposit amount
 		VMContext.setPredecessor_account_id(bob)
 		VMContext.setAttached_deposit(price)
-
+		// Buyer (bob) will call this buy function
 		nonSpec.buy(tokenId)
-
+		// after successful purchase the owner of the NFT must be bob
 		expect(get_token_owner(tokenId)).toBe(bob)
-
-		expect(() => {
-			VMContext.setPredecessor_account_id(alice)
-			const tokenId = 1
-			nonSpec.remove_from_market(tokenId)
-		}).toThrow(nonSpec.ERROR_TOKEN_NOT_IN_MARKET)
 	})
 })
 
-describe('get_market', () => {
-	it('return market data', () => {
+describe('get_market_list', () => {
+	it('return market price for a token', () => {
 		VMContext.setPredecessor_account_id(alice)
-		// mint new token that return its id
-		const tokenId = nonSpec.mint_to(alice)
-		// set price to be 1 NEAR
-		const price = u128.from('1000000000000000000000000')
-		nonSpec.add_to_market(tokenId, price)
 
-		expect(nonSpec.get_market(0, 1)).toHaveLength(1)
+		const price = u128.from('1000000000000000000000000')
+		// mint new token that return its id
+		const tokenId_1 = nonSpec.mint_to(alice)
+		nonSpec.add_to_market(tokenId_1, price)
+
+		const tokenId_2 = nonSpec.mint_to(alice)
+		nonSpec.add_to_market(tokenId_2, price)
+
+		const tokenId_3 = nonSpec.mint_to(alice)
+		nonSpec.add_to_market(tokenId_3, price)
+		// set price to be 1 NEAR
+		// get the first 5 NFTs listed on the market
+		expect(nonSpec.get_market(0, 5)).toHaveLength(3)
 	})
 })
